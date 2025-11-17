@@ -57,7 +57,7 @@ export const useBankStore = defineStore('bank', () => {
 
 
     async function createWithdraw(data) {
-        const response = await BankService.createWithdraw(data)
+        const response = await BankService.createWithdrawService(data)
 
         if (response.error === 0) {
             currentAccount.value.amount = response.data.amount

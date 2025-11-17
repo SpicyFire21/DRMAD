@@ -91,7 +91,7 @@ async function createWithdrawFromLocalSource(data) {
     return LocalSource.createWithdraw(data)
 }
 
-async function createWithdraw(data) {
+async function createWithdrawService(data) {
     let response = null;
     try {
         // changer la méthode appelée quand cette fonctionnalité l'API est prête
@@ -106,5 +106,5 @@ async function createWithdraw(data) {
 
 export default {
     getAccountAmount,
-    getAllTransactions, createWithdraw, createPayment, getAccount, getTransactions
+    getAllTransactions, createWithdrawService, createPayment, getAccount, getTransactions
 }
