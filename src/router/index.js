@@ -14,11 +14,11 @@ const routes = [
         name: 'shopitems',
         component: VirusesView
     },
-    {
-        path: '/shop/login',
-        name: 'shoplogin',
-        component: ShopLoginView
-    },
+    // {
+    //     path: '/shop/login',
+    //     name: 'shoplogin',
+    //     component: ShopLoginView
+    // },
     {
         path: '/bank/account',
         name: 'bankaccount',
@@ -34,11 +34,11 @@ const routes = [
                 name:'shophome',
                 component:ShopHome
             },
-            // {
-            //     path:'login',
-            //     name:'shoplogin',
-            //     // component:ShopLogin
-            // },
+            {
+                path:'login',
+                name:'shoplogin',
+                component:ShopLoginView
+            },
             {
                 path:'buy',
                 name:'shopbuy',

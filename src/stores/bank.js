@@ -5,6 +5,7 @@ import BankService from '@/services/bankaccount.service.js'
 
 export const useBankStore = defineStore('bank', () => {
     // state
+    const currentAccount = ref(null)              // contient tout l'objet compte
     const accountAmount = ref(0)
     const accountTransactions = ref([])
     const accountNumberState = ref(0)
@@ -12,6 +13,17 @@ export const useBankStore = defineStore('bank', () => {
     //mutation
     const updateaccountNumberState = (data) =>{
         accountNumberState.value = data;
+    }
+    function setAccount(data) {
+        currentAccount.value = data
+    }
+
+    function setTransactions(data) {
+        accountTransactions.value = data
+    }
+
+    function setStatus(s) {
+        accountNumberState.value = s
     }
 
     //action
@@ -43,5 +55,32 @@ export const useBankStore = defineStore('bank', () => {
         }
     }
 
-    return { accountAmount,accountTransactions,accountNumberState, getAccountAmount,getTransactions}
+
+    async function createWithdraw(data) {
+        const response = await BankService.createWithdraw(data)
+
+        if (response.error === 0) {
+            currentAccount.value.amount = response.data.amount
+            await getTransactions(data.idAccount)
+            setStatus(1)
+        } else {
+            console.error(response.data)
+            setStatus(-1)
+        }
+    }
+
+    async function createPayment(data) {
+        const response = await BankService.createPayment(data)
+
+        if (response.error === 0) {
+            currentAccount.value.amount = response.data.amount
+            await getTransactions(data.idAccount)
+            setStatus(1)
+        } else {
+            console.error(response.data)
+            setStatus(-1)
+        }
+    }
+
+    return { accountAmount,accountTransactions,accountNumberState, getAccountAmount,getTransactions,createPayment,createWithdraw}
 })

@@ -24,6 +24,10 @@ export const useShopStore = defineStore('shop', () => {
         }
     }
 
+    async function shopLogout(){
+        shopUser.value = null;
+    }
+
     async function getAllViruses() {
         let response = await ShopService.getAllViruses()
         if (response.error === 0) {
@@ -73,5 +77,5 @@ export const useShopStore = defineStore('shop', () => {
         }
     }
 
-    return {viruses, shopUser,basket, shopLogin, getAllViruses, getBasket,addBasket,deleteBasket,clearBasket}
+    return {viruses, shopUser,basket, shopLogin, getAllViruses, getBasket,addBasket,deleteBasket,clearBasket,shopLogout}
 })

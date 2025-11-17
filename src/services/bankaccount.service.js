@@ -1,4 +1,4 @@
-import LocalSource from "@/services/localsource.service.js";
+import LocalSource, {createWithdraw} from "@/services/localsource.service.js";
 
 function getAccountAmountFromLocalSource(number) {
     return LocalSource.getAccountAmount(number);
@@ -11,13 +11,13 @@ async function getAccountAmount(number) {
         response = await getAccountAmountFromLocalSource(number)
     }
         // NB: le catch n'aura lieu que pour des requête vers l'API, s'il y a une erreur réseau
-    catch(err) {
-        response = {error: 1, status: 404, data: 'erreur réseau, impossible de récupéré la solde bancaire'  }
+    catch (err) {
+        response = {error: 1, status: 404, data: 'erreur réseau, impossible de récupéré la solde bancaire'}
     }
     return response
 }
 
-function getAllTransactionsFromLocalSource(number){
+function getAllTransactionsFromLocalSource(number) {
     return LocalSource.getAccountTransactions(number);
 
 }
@@ -29,14 +29,82 @@ async function getAllTransactions(number) {
         response = await getAllTransactionsFromLocalSource(number)
     }
         // NB: le catch n'aura lieu que pour des requête vers l'API, s'il y a une erreur réseau
-    catch(err) {
-        response = {error: 1, status: 404, data: 'erreur réseau, impossible de récupéré les transactions'  }
+    catch (err) {
+        response = {error: 1, status: 404, data: 'erreur réseau, impossible de récupéré les transactions'}
     }
     return response
 }
 
+async function getAccountFromLocalSource(data) {
+    return LocalSource.getAccount(data)
+}
 
-export default{
- getAccountAmount,
-    getAllTransactions
+
+async function getAccount(data) {
+    let response = null;
+    try {
+        // changer la méthode appelée quand cette fonctionnalité l'API est prête
+        response = await getAccountFromLocalSource(data)
+    }
+        // NB: le catch n'aura lieu que pour des requête vers l'API, s'il y a une erreur réseau
+    catch (err) {
+        response = {error: 1, status: 404, data: 'erreur réseau, impossible de récupéré le compte'}
+    }
+    return response
+}
+
+async function getTransactionsFromLocalSource(data) {
+    return LocalSource.getTransactions(data)
+}
+
+async function getTransactions(data) {
+    let response = null;
+    try {
+        // changer la méthode appelée quand cette fonctionnalité l'API est prête
+        response = await getTransactionsFromLocalSource(data)
+    }
+        // NB: le catch n'aura lieu que pour des requête vers l'API, s'il y a une erreur réseau
+    catch (err) {
+        response = {error: 1, status: 404, data: 'erreur réseau, impossible de récupéré le compte'}
+    }
+    return response
+}
+
+async function createPaymentFromLocalSource(data) {
+    return LocalSource.createPayment(data)
+}
+
+async function createPayment(data) {
+    let response = null;
+    try {
+        // changer la méthode appelée quand cette fonctionnalité l'API est prête
+        response = await createPaymentFromLocalSource(data)
+    }
+        // NB: le catch n'aura lieu que pour des requête vers l'API, s'il y a une erreur réseau
+    catch (err) {
+        response = {error: 1, status: 404, data: 'erreur réseau, impossible de récupéré le compte'}
+    }
+    return response
+}
+
+async function createWithdrawFromLocalSource(data) {
+    return LocalSource.createWithdraw(data)
+}
+
+async function createWithdraw(data) {
+    let response = null;
+    try {
+        // changer la méthode appelée quand cette fonctionnalité l'API est prête
+        response = await createWithdrawFromLocalSource(data)
+    }
+        // NB: le catch n'aura lieu que pour des requête vers l'API, s'il y a une erreur réseau
+    catch (err) {
+        response = {error: 1, status: 404, data: 'erreur réseau, impossible de récupéré le compte'}
+    }
+    return response
+}
+
+export default {
+    getAccountAmount,
+    getAllTransactions, createWithdraw, createPayment, getAccount, getTransactions
 }

@@ -1,14 +1,17 @@
 <template>
-  <div>
-    <table border="1" style="border-collapse: collapse; width: 100%;">
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
       <tr>
         <th v-if="itemCheck">✓</th>
         <th v-for="(field, fIndex) in fields" :key="'head-' + fIndex">{{ field }}</th>
         <th v-if="itemButton?.show">{{ itemButton.text }}</th>
       </tr>
+      </thead>
 
+      <tbody>
       <tr v-for="(item, index) in data" :key="index">
-        <td v-if="itemCheck" style="text-align: center;">
+        <td v-if="itemCheck" class="check-cell">
           <input
               type="checkbox"
               :checked="checked[index]"
@@ -21,31 +24,35 @@
             <b>{{ formatDate(item[field].$date) }}</b>
           </div>
           <div v-else-if="field === 'promotion'">
-            <div v-for="(item,index) in item['promotion']" :key="index" >
-                {{item.discount}}€ pour {{item.amount}} unités
-            </div>
+            <ul class="promo-list">
+              <li v-for="(promo, i) in item['promotion']" :key="i">
+                <strong>{{ promo.discount }}€</strong> pour {{ promo.amount }} unités
+              </li>
+            </ul>
           </div>
           <div v-else>
             {{ item[field] }}
           </div>
         </td>
 
-        <td v-if="itemButton?.show" style="text-align: center;">
-          <input
-              v-if="itemAmount"
-              type="number"
-              min="1"
-              v-model.number="amounts[index]"
-              style="width: 60px; margin-right: 5px;"
-          />
-          <button @click="$emit('item-button-clicked', { index, amount: amounts[index] })">
-            {{ itemButton.text }}
-          </button>
+        <td v-if="itemButton?.show" class="action-cell">
+          <div class="action-wrapper">
+            <input
+                v-if="itemAmount"
+                type="number"
+                min="1"
+                v-model.number="amounts[index]"
+            />
+            <button @click="$emit('item-button-clicked', { index, amount: amounts[index] })">
+              {{ itemButton.text }}
+            </button>
+          </div>
         </td>
       </tr>
+      </tbody>
     </table>
 
-    <div v-if="listButton?.show" style="margin-top: 1rem; text-align: center;">
+    <div v-if="listButton?.show" class="list-button-container">
       <button @click="emitListButtonClicked">{{ listButton.text }}</button>
     </div>
   </div>
@@ -55,13 +62,13 @@
 import { reactive, watch, defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
-  data: Array,        // Les données sources
-  fields: Array,      // Champs à afficher dans l'ordre
-  itemCheck: Boolean, // Afficher les cases à cocher ?
-  checked: Array,     // Tableau des cases cochées
-  itemButton: Object, // { show: true, text: "..." } pour bouton par ligne
-  listButton: Object, // { show: true, text: "..." } pour bouton global
-  itemAmount: Boolean // Afficher les champs numériques ?
+  data: Array,
+  fields: Array,
+  itemCheck: Boolean,
+  checked: Array,
+  itemButton: Object,
+  listButton: Object,
+  itemAmount: Boolean
 })
 
 const emit = defineEmits([
@@ -92,18 +99,96 @@ const emitListButtonClicked = () => {
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const year = date.getFullYear()
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-  const seconds = String(date.getSeconds()).padStart(2, '0')
-  return `${month}/${day}/${year} à ${hours}:${minutes}:${seconds}`
+  return date.toLocaleString('fr-FR')
 }
 </script>
 
 <style scoped>
-input[type="number"] {
+.table-wrapper {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-table th {
+  background-color: #0078d7;
+  color: white;
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.data-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.data-table tr:hover {
+  background-color: #f5faff;
+}
+
+.check-cell {
   text-align: center;
+}
+
+.action-cell {
+  text-align: center;
+}
+
+.action-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+input[type="number"] {
+  width: 60px;
+  padding: 6px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 13px;
+}
+button:hover {
+  background-color: #005fa3;
+}
+
+.list-button-container {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.promo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.promo-list li {
+  background: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  font-size: 13px;
 }
 </style>

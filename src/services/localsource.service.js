@@ -217,13 +217,13 @@ export async function payOrder({ userId, uuid }) {
     return { error: 0, status: 200, data: "Commande payée avec succès" };
 }
 
-export function getOrdersByUser(userId) {
+export async function getOrdersByUser(userId) {
     const user = shopusers.find(u => u._id === userId)
     let data = JSON.parse(JSON.stringify(user.orders))
     return {error:0,status:200,data:data}
 }
 
-export function cancelOrder(userId, orderUuid) {
+export async function cancelOrder(userId, orderUuid) {
     const user = shopusers.find(u => u._id === userId)
     if (!user) return null
 
@@ -236,6 +236,113 @@ export function cancelOrder(userId, orderUuid) {
 
     return JSON.parse(JSON.stringify(order))
 }
+
+export async function getAccount(data) {
+    if (!data?.number) {
+        return { data: "numéro de compte invalide" }
+    }
+
+    const account = bankaccounts.find(acc => acc.number === data.number)
+
+    if (account) {
+        return { data: { ...account } }
+    } else {
+        return { data: "numéro de compte invalide" }
+    }
+}
+
+export async function getTransactions(data) {
+    if (!data?.idAccount) {
+        return { data: "aucune transaction pour ce compte" }
+    }
+
+    // Filtre les transactions correspondant au compte
+    const accountTransactions = transactions
+        .filter(tx => tx.account === data.idAccount)
+        .map(tx => ({ ...tx })) // copie des objets pour éviter modification
+
+    if (accountTransactions.length > 0) {
+        return { data: accountTransactions }
+    } else {
+        return { data: "aucune transaction pour ce compte" }
+    }
+}
+
+export async function createWithdraw(data) {
+    if (!data?.idAccount || typeof data.amount !== 'number' || data.amount <= 0) {
+        return { data: "id de compte invalide" }
+    }
+
+    // Cherche le compte
+    const account = bankaccounts.find(acc => acc._id === data.idAccount)
+    if (!account) {
+        return { data: "id de compte invalide" }
+    }
+
+    // Crée la transaction
+    const newTransaction = {
+        _id: uuidv4(), // identifiant unique
+        amount: data.amount, // montant négatif
+        account: account._id,
+        date: { $date: new Date() },
+        uuid: uuidv4()
+    }
+
+    // Ajoute la transaction au tableau
+    transactions.push(newTransaction)
+
+    // Débite le compte
+    account.amount -= data.amount
+
+    // Retourne le résultat
+    return { data: { uuid: newTransaction.uuid, amount: account.amount } }
+}
+
+export async function createPayment(data) {
+    if (!data?.idAccount || typeof data.amount !== 'number' || data.amount <= 0) {
+        return { data: "id de compte invalide" }
+    }
+
+    const sender = bankaccounts.find(acc => acc._id === data.idAccount)
+    if (!sender) {
+        return { data: "id de compte invalide" }
+    }
+
+    const receiver = bankaccounts.find(acc => acc.number === data.destNumber)
+    if (!receiver) {
+        return { data: "compte destinataire inexistant" }
+    }
+
+    const withdrawUUID = uuidv4()
+    const depositUUID = uuidv4()
+    const date = { $date: new Date() }
+
+    const withdrawTx = {
+        _id: uuidv4(),
+        amount: -Math.abs(data.amount),
+        account: sender._id,
+        date,
+        uuid: withdrawUUID,
+        destination: receiver._id
+    }
+
+    const depositTx = {
+        _id: uuidv4(),
+        amount: Math.abs(data.amount),
+        account: receiver._id,
+        date,
+        uuid: depositUUID
+    }
+
+    transactions.push(withdrawTx)
+    transactions.push(depositTx)
+
+    sender.amount -= data.amount
+    receiver.amount += data.amount
+
+    return { data: { uuid: withdrawUUID, amount: sender.amount } }
+}
+
 
 export default{
   shopLogin,
@@ -250,6 +357,6 @@ export default{
     getOrder,
     payOrder,
     getOrdersByUser,
-    cancelOrder
+    cancelOrder, getAccount , createPayment, createWithdraw, getTransactions
 
 }
