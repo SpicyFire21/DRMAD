@@ -29,6 +29,7 @@ const routes = [
     {
         path: "/bank",
         component: BankView,
+        redirect: '/bank/home',
         children: [
             {
                 path: "home",
@@ -61,31 +62,33 @@ const routes = [
         path: '/shop',
         name:'shop',
         component: ShopView,
+        redirect: '/shop/home',
         children:[
             {
-                path:'/home',
-                name:'shophome',
-                component:ShopHome
+                path:'home',
+                components:{shopmain:ShopHome},
+                alias: ["/shop"]
+
             },
             {
                 path:'login',
                 name:'shoplogin',
-                component:ShopLoginView
+                components:{shopmain:ShopLoginView}
             },
             {
                 path:'buy',
                 name:'shopbuy',
-                component:ShopBuy
+                components:{shopmain:ShopBuy}
             },
             {
                 path:'pay/:orderId',
                 name:'shoppay',
-                component:ShopPay
+                components:{shopmain:ShopPay}
             },
             {
                 path:'orders',
                 name:'shoporders',
-                component:ShopOrders
+                components: {shopmain:ShopOrders}
             },
         ]
     }

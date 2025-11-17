@@ -3,7 +3,7 @@
     <h1>Boutique</h1>
     <NavBar :links="navbtn" v-if="!shopStore.shopUser"/>
     <NavBar :links="navbtn2" v-if="shopStore.shopUser"/>
-    <router-view/>
+    <router-view name="shopmain"/>
   </div>
 </template>
 
