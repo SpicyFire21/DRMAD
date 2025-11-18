@@ -14,7 +14,7 @@ export const useBankStore = defineStore('bank', () => {
     const updateaccountNumberState = (data) =>{
         accountNumberState.value = data;
     }
-    function setAccount(data) {
+    const setAccount=(data)=> {
         currentAccount.value = data
     }
 
@@ -82,5 +82,5 @@ export const useBankStore = defineStore('bank', () => {
         }
     }
 
-    return { accountAmount,accountTransactions,accountNumberState, getAccountAmount,getTransactions,createPayment,createWithdraw}
+    return { accountAmount,accountTransactions,accountNumberState,setAccount, getAccountAmount,getTransactions,createPayment,createWithdraw}
 })
