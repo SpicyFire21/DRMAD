@@ -205,12 +205,22 @@ export async function getOrder({ userId, uuid }) {
     return { error: 0, status: 200, data: clone };
 }
 
-export async function payOrder({ userId, uuid }) {
+export async function payOrder({ userId, uuid,transactionUuid  }) {
     let user = shopusers.find(u => u._id === userId);
     if (!user) return { error: 1, status: 404, data: "Utilisateur introuvable" };
 
     let order = user.orders.find(o => o.uuid === uuid);
     if (!order) return { error: 1, status: 404, data: "Commande introuvable" };
+
+    let transaction = transactions.find(t => t._id === transactionUuid);
+    if(!transaction) return {error:1,status:404,data:"Transaction introuvable"}
+
+    console.log(order.total)
+    console.log(transaction.amount)
+
+    if (order.total > transaction.amount){
+        return {error:1,status:404,data:`impossible de payer cette commande, il manque ${order.total - transaction.amount} €`}
+    }
 
     order.status = "finalized";
 

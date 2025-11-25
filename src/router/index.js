@@ -1,7 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import VirusesView from "@/views/VirusesView.vue";
 import ShopLoginView from "@/views/ShopLoginView.vue";
-import BankAccountView from "@/views/BankAccountView.vue";
 import ShopView from "@/views/ShopView.vue";
 import ShopHome from "@/views/ShopHome.vue";
 import ShopBuy from "@/views/ShopBuy.vue";

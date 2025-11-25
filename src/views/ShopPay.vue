@@ -1,7 +1,6 @@
 <template>
   <div class="shop-pay">
     <h1>Paiement de la commande</h1>
-
     <div class="form">
       <label for="uuid">UUID de la commande :</label>
       <input
@@ -11,10 +10,23 @@
           placeholder="Entrez l'UUID de la commande"
       />
 
+      <label for="trans">UUID de la transactions :</label>
+      <input
+          id="trans"
+          v-model="transaction"
+          size="40"
+          placeholder="Entrez l'UUID de la transactions"
+      />
       <button @click="pay">Payer</button>
+      <div v-if="currentCommand">
+        <b>Total : {{ currentCommand.total }} €</b>
+        <p>Total : {{ currentCommand.date }} </p>
+
+
+      </div>
     </div>
 
-    <p v-if="message" class="message">{{ message }}</p>
+    <p v-if="message" class="alert-error">{{ message }}</p>
   </div>
 </template>
 
@@ -28,18 +40,32 @@ const route = useRoute();
 const router = useRouter();
 const store = useShopStore();
 
+const currentCommand = ref(null)
 const uuid = ref("");
+const transaction = ref("");
 const message = ref("");
 
-onMounted(() => {
+onMounted(async () => {
   if (route.params.orderId) {
     uuid.value = route.params.orderId;
   }
+  let res = await ShopService.getOrder({
+    userId: store.shopUser._id,
+    uuid: uuid.value,
+  });
+
+  currentCommand.value = res.data
+  console.log(currentCommand.value)
 });
 
 async function pay() {
   if (!uuid.value) {
     message.value = "Veuillez saisir un UUID de commande.";
+    return;
+  }
+
+  if (!transaction.value) {
+    message.value = "Veuillez saisir un UUID d'une transactions.";
     return;
   }
 
@@ -56,6 +82,7 @@ async function pay() {
   let payResponse = await ShopService.payOrder({
     userId: store.shopUser._id,
     uuid: uuid.value,
+    transactionUuid:transaction.value
   });
 
   if (payResponse.error === 0) {
