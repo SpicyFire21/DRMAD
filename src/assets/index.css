@@ -50,6 +50,11 @@ button {
     box-shadow: var(--shadow);
     transition: 0.2s ease;
 }
+
+button:disabled {
+    background-color: #2c2c2c;
+}
+
 button:hover {
     background-color: #0062b8;
     transform: translateY(-1px);

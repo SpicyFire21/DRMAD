@@ -247,17 +247,18 @@ export async function cancelOrder(userId, orderUuid) {
     return JSON.parse(JSON.stringify(order))
 }
 
-export async function getAccount(data) {
-    if (!data?.number) {
+export async function getAccount(number) {
+    console.log(number)
+    if (!number) {
         return { data: "numéro de compte invalide" }
     }
 
-    const account = bankaccounts.find(acc => acc.number === data.number)
+    const account = bankaccounts.find(acc => acc.number === number)
 
     if (account) {
-        return { data: { ...account } }
+        return {error:0,status:200, data: { ...account } }
     } else {
-        return { data: "numéro de compte invalide" }
+        return { error:1,status:400,data: "numéro de compte invalide" }
     }
 }
 

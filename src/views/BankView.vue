@@ -7,8 +7,10 @@
     </NavBar>
 
     <div class="bank-layout">
-      <VerticalMenu :items="menuItems">
-        <template #menu-title="{ label }">
+      <VerticalMenu :items="menuItems" >
+        <template #menu-title="{ label }"
+
+        >
           <span class="menu-title-strong">{{ label }}</span>
         </template>
       </VerticalMenu>
@@ -16,7 +18,7 @@
       <router-view name="bankmain" v-slot="{ Component }">
         <component
             :is="Component"
-            :currentAmount="bankStore.accountAmount"
+            :currentAmount="bankStore.accountAmount.amount"
             v-slot:account-amount="{ amount }"
         >
           <input

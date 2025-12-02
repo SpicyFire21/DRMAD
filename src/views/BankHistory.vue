@@ -41,6 +41,7 @@
         @itemClicked="openOne"
         @tableClicked="openMany"
     >
+
       <template #item-button>
         Détails
       </template>
@@ -50,92 +51,63 @@
       </template>
     </DataTable>
 
-    <dialog ref="dlgOne">
-      {{ dialogOne }}
-      <button @click="dlgOne.close()">OK</button>
-    </dialog>
-
-    <dialog ref="dlgMany">
-      {{ dialogMany }}
-      <button @click="dlgMany.close()">OK</button>
-    </dialog>
 
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue"
+import {ref, computed, onMounted} from "vue"
 import DataTable from "@/components/DataTable.vue"
+import {useBankStore} from "@/stores/bank.js";
+
+const bankStore = useBankStore();
 
 
-const transactions = ref([
-
-])
 
 const headers = [
   { label: "montant", name: "amount" },
-  { label: "date", name: "date" },
-  { label: "type", name: "type" }
-]
+  { label: "date", name: "date" }]
 
-const sorted = computed(() =>
-    [...transactions.value].sort((a, b) => b.date.localeCompare(a.date))
-)
 
 const filterActive = ref(false)
 const startDate = ref("")
 const endDate = ref("")
 
-function onStartChange() {
-  if (endDate.value && startDate.value > endDate.value) {
-    endDate.value = ""
-  }
-}
-
-function onEndChange() {
-  if (startDate.value && endDate.value < startDate.value) {
-    startDate.value = ""
-  }
-}
 
 const filtered = computed(() => {
-  if (!filterActive.value) {
-    return withType(sorted.value)
-  }
+  let list = bankStore.accountTransactions
 
-  let result = sorted.value
+  if (!filterActive.value) return list
 
-  if (startDate.value) {
-    result = result.filter(t => t.date >= startDate.value)
-  }
+  return list.filter(t => {
+    const raw = t.date?.$date ?? t.date
+    if (!raw) return false
 
-  if (endDate.value) {
-    result = result.filter(t => t.date <= endDate.value)
-  }
+    const day = String(raw).slice(0, 10)
 
-  return withType(result)
+    if (startDate.value && day < startDate.value) return false
+    if (endDate.value && day > endDate.value) return false
+
+    return true
+  })
 })
 
-function withType(list) {
-  return list.map(t => ({
-    ...t,
-    type: t.amount < 0 ? "S" : "D"
-  }))
-}
 
-const dlgOne = ref(null)
-const dialogOne = ref("")
 
-const dlgMany = ref(null)
+
+
 const dialogMany = ref("")
 
 function openOne(item) {
-  dialogOne.value = item.uuid
-  dlgOne.value.showModal()
+    alert(item.uuid)
 }
 
 function openMany(arr) {
   dialogMany.value = arr.map(t => t.uuid).join(" — ")
-  dlgMany.value.showModal()
+  alert(dialogMany.value)
 }
+
+onMounted(async ()=>{
+  await bankStore.getTransactions(bankStore.currentAccount.number)
+})
 </script>

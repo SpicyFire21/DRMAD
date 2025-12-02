@@ -10,6 +10,10 @@ export const useBankStore = defineStore('bank', () => {
     const accountTransactions = ref([])
     const accountNumberState = ref(0)
 
+
+
+
+
     //mutation
     const updateaccountNumberState = (data) =>{
         accountNumberState.value = data;
@@ -27,9 +31,23 @@ export const useBankStore = defineStore('bank', () => {
     }
 
     //action
+    async function getAccount(number){
+        let response = await BankService.getAccount(number);
+        if (response.error === 0) {
+            setAccount(response.data)
+            updateaccountNumberState(1);
+        }
+        else {
+            console.error(response.data)
+            updateaccountNumberState(-1)
+        }
+
+    }
+
     async function getAccountAmount(number) {
         let response = await BankService.getAccountAmount(number);
         if (response.error === 0) {
+            console.log(response.data)
             accountAmount.value = response.data
             updateaccountNumberState(1);
         }
@@ -41,6 +59,7 @@ export const useBankStore = defineStore('bank', () => {
 
     async function getTransactions(number) {
         let response = await BankService.getAllTransactions(number);
+        console.log(response.data)
 
         if (response.error === 0) {
             accountTransactions.value = response.data
@@ -82,5 +101,13 @@ export const useBankStore = defineStore('bank', () => {
         }
     }
 
-    return { accountAmount,accountTransactions,accountNumberState,setAccount, getAccountAmount,getTransactions,createPayment,createWithdraw}
+    return { currentAccount,
+        accountAmount,
+        accountTransactions,
+        accountNumberState,
+        getAccount,
+        getAccountAmount,
+        getTransactions,
+        createPayment,
+        createWithdraw}
 })

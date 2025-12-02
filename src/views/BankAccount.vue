@@ -13,7 +13,7 @@
       />
     </div>
 
-      <button :disabled="!validNumber" @click="valid">Valider</button>
+      <button :disabled="!validNumber" @click="valid(number)">Valider</button>
 
 
     <div v-if="bankStore.accountNumberState === -1" class="error">
@@ -46,8 +46,11 @@ const formatDate = (dateString) => {
   });
 };
 
-const valid = () => {
+const valid = async (n) => {
+  await bankStore.getAccount(n)
+  await bankStore.getTransactions(bankStore.currentAccount.number)
 
+  console.log(bankStore.currentAccount)
 };
 </script>
 

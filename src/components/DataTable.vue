@@ -1,8 +1,6 @@
 <template>
   <div>
-
     <table>
-
       <thead>
       <tr>
 
@@ -23,8 +21,15 @@
         </td>
 
         <td v-for="(h, i) in headers" :key="i">
+        <p v-if="h.name === 'date'">
+          {{ formatDate(item.date.$date) }}
+        </p>
+
+        <p v-else>
           {{ item[h.name] }}
-        </td>
+        </p>
+      </td>
+
 
         <td v-if="itemButton">
           <button @click="emitItem(item)">
@@ -48,6 +53,18 @@
 
 <script setup>
 import { ref } from "vue"
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+};
 
 const props = defineProps({
   headers: { type: Array, required: true },

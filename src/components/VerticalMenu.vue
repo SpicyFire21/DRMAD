@@ -8,7 +8,7 @@
 
       <!-- TITRE -->
       <div v-if="item.type === 'title'" class="menu-title">
-        <slot name="menu-title" :label="item.label">
+        <slot name="menu-title" :label="item.label" >
           {{ item.label }}
         </slot>
       </div>
@@ -20,7 +20,8 @@
           @click="goTo(item.to)"
       >
         <slot name="menu-link" :label="item.label">
-          <button>{{ item.label }}</button>
+          <button         :disabled="!bankStore.currentAccount"
+          >{{ item.label }}</button>
         </slot>
       </span>
 
@@ -30,6 +31,9 @@
 
 <script setup>
 import { useRouter } from "vue-router"
+import {useBankStore} from "@/stores/bank.js";
+
+const bankStore= useBankStore();
 
 const router = useRouter()
 
