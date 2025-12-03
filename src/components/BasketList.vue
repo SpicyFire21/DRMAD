@@ -32,7 +32,6 @@ onMounted(async () => {
 })
 
 async function removeItem(item) {
-  console.log(item.index)
   const virus = store.basket[item.index]
   await store.deleteBasket(
       { _idUser: store.shopUser._id,

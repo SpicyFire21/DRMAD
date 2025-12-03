@@ -55,7 +55,6 @@ onMounted(async () => {
   });
 
   currentCommand.value = res.data
-  console.log(currentCommand.value)
 });
 
 async function pay() {

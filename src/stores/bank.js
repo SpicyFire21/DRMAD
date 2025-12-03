@@ -47,7 +47,6 @@ export const useBankStore = defineStore('bank', () => {
     async function getAccountAmount(number) {
         let response = await BankService.getAccountAmount(number);
         if (response.error === 0) {
-            console.log(response.data)
             accountAmount.value = response.data
             updateaccountNumberState(1);
         }
@@ -59,14 +58,10 @@ export const useBankStore = defineStore('bank', () => {
 
     async function getTransactions(number) {
         let response = await BankService.getAllTransactions(number);
-        console.log(response.data)
-
+        console.log(number)
         if (response.error === 0) {
             accountTransactions.value = response.data
             updateaccountNumberState(1)
-
-
-
         }
         else {
             console.error(response.data)
@@ -80,7 +75,7 @@ export const useBankStore = defineStore('bank', () => {
 
         if (response.error === 0) {
             currentAccount.value.amount = response.data.amount
-            await getTransactions(data.idAccount)
+            await getTransactions(data.number)
             setStatus(1)
         } else {
             console.error(response.data)
@@ -90,10 +85,10 @@ export const useBankStore = defineStore('bank', () => {
 
     async function createPayment(data) {
         const response = await BankService.createPayment(data)
-
+        console.log(response)
         if (response.error === 0) {
             currentAccount.value.amount = response.data.amount
-            await getTransactions(data.idAccount)
+            await getTransactions(data.destNumber)
             setStatus(1)
         } else {
             console.error(response.data)

@@ -50,7 +50,6 @@ const valid = async (n) => {
   await bankStore.getAccount(n)
   await bankStore.getTransactions(bankStore.currentAccount.number)
 
-  console.log(bankStore.currentAccount)
 };
 </script>
 

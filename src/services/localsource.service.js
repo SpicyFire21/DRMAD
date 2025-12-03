@@ -83,8 +83,11 @@ function getAccountAmount(number) {
  */
 async function getAccountTransactions(number) {
     if(number && number !== '') {
-        let amount = bankaccounts.find(b => b.number === number);
-        let transaction = transactions.filter(t => t.account === amount._id)
+        let account = bankaccounts.find(b => b.number === number);
+        if (!account) {
+            return { error: 1, status: 404, data: "Compte introuvable" }
+        }
+        let transaction = transactions.filter(t => t.account === account._id)
         return {error:0,status:200,data:transaction};
     } else {
         return {error:1,status:404,data:"Aucune Solde a été trouvée"};
@@ -215,8 +218,7 @@ export async function payOrder({ userId, uuid,transactionUuid  }) {
     let transaction = transactions.find(t => t._id === transactionUuid);
     if(!transaction) return {error:1,status:404,data:"Transaction introuvable"}
 
-    console.log(order.total)
-    console.log(transaction.amount)
+
 
     if (order.total > transaction.amount){
         return {error:1,status:404,data:`impossible de payer cette commande, il manque ${order.total - transaction.amount} €`}
@@ -248,7 +250,6 @@ export async function cancelOrder(userId, orderUuid) {
 }
 
 export async function getAccount(number) {
-    console.log(number)
     if (!number) {
         return { data: "numéro de compte invalide" }
     }
@@ -280,14 +281,20 @@ export async function getTransactions(data) {
 }
 
 export async function createWithdraw(data) {
-    if (!data?.idAccount || typeof data.amount !== 'number' || data.amount <= 0) {
-        return { data: "id de compte invalide" }
+
+    if (!data.idaccount) {
+        return { error:1,status:400,data: "id de compte manquant" }
+    }
+
+    if(data.amount === 0){
+        return { error:1,status:400,data: "transaction non valide" }
+
     }
 
     // Cherche le compte
-    const account = bankaccounts.find(acc => acc._id === data.idAccount)
+    const account = bankaccounts.find(acc => acc._id === data.idaccount)
     if (!account) {
-        return { data: "id de compte invalide" }
+        return { error:1,status:404,data: "compte invalide" }
     }
 
     // Crée la transaction
@@ -299,6 +306,8 @@ export async function createWithdraw(data) {
         uuid: uuidv4()
     }
 
+    // c quoi la diff en l'id et l'uuid
+
     // Ajoute la transaction au tableau
     transactions.push(newTransaction)
 
@@ -306,22 +315,22 @@ export async function createWithdraw(data) {
     account.amount -= data.amount
 
     // Retourne le résultat
-    return { data: { uuid: newTransaction.uuid, amount: account.amount } }
+    return { error:0,status:201,data: { uuid: newTransaction.uuid, amount: account.amount } }
 }
 
 export async function createPayment(data) {
-    if (!data?.idAccount || typeof data.amount !== 'number' || data.amount <= 0) {
-        return { data: "id de compte invalide" }
+    if (!data.idaccount) {
+        return { error:1,status:400,data: "id de compte invalide" }
     }
 
-    const sender = bankaccounts.find(acc => acc._id === data.idAccount)
+    const sender = bankaccounts.find(acc => acc._id === data.idaccount)
     if (!sender) {
-        return { data: "id de compte invalide" }
+        return { error:1,status:404,data: "compte introuvable" }
     }
 
     const receiver = bankaccounts.find(acc => acc.number === data.destNumber)
     if (!receiver) {
-        return { data: "compte destinataire inexistant" }
+        return { error:1,status:404,data: "compte destinataire inexistant" }
     }
 
     const withdrawUUID = uuidv4()
@@ -332,7 +341,7 @@ export async function createPayment(data) {
         _id: uuidv4(),
         amount: -Math.abs(data.amount),
         account: sender._id,
-        date,
+        date:date,
         uuid: withdrawUUID,
         destination: receiver._id
     }
@@ -341,7 +350,7 @@ export async function createPayment(data) {
         _id: uuidv4(),
         amount: Math.abs(data.amount),
         account: receiver._id,
-        date,
+        date: date,
         uuid: depositUUID
     }
 
@@ -351,7 +360,7 @@ export async function createPayment(data) {
     sender.amount -= data.amount
     receiver.amount += data.amount
 
-    return { data: { uuid: withdrawUUID, amount: sender.amount } }
+    return { error:0,status:201,data: { uuid: withdrawUUID, amount: sender.amount } }
 }
 
 
