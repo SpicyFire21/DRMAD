@@ -1,6 +1,6 @@
 <template>
   <div class="bank-container">
-    <NavBar :links="[{label: 'Mon Compte', to: '/bank/account'}]">
+    <NavBar :links="topMenuItems">
       <template #nav-button="{ label }">
         <strong>{{ label }}</strong>
       </template>
@@ -45,6 +45,11 @@ const menuItems = [
   { type: "link", label: "Débit/Virement", to: "/bank/operation" },
   { type: "title", label: "États" },
   { type: "link", label: "Historique", to: "/bank/history" },
+]
+
+const topMenuItems = [
+    {label: 'Mon Compte', to: '/bank/account'},
+  {label:'Deconnexion',to:'/bank/logout'}
 ]
 </script>
 

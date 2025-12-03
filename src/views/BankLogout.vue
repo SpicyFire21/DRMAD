@@ -10,13 +10,13 @@ import { useBankStore } from "@/stores/bank.js"
 
 import { useRouter } from "vue-router"
 
-const store = useBankStore()
+const bankStore = useBankStore()
 const router = useRouter()
 
 onMounted(() => {
   setTimeout(() => {
-    store.setAccount(null)
-    router.push({ name: "bank-home" })
+    bankStore.setAccount(null)
+    router.push({ path: "/bank/home" })
   }, 1000)
 })
 </script>

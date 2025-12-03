@@ -10,7 +10,7 @@
       </thead>
 
       <tbody>
-      <tr v-for="(item, index) in data" :key="index">
+      <tr v-for="(item, index) in data" :key="index" @click="goTo(item.links)">
         <td v-if="itemCheck" class="check-cell">
           <input
               type="checkbox"
@@ -101,6 +101,12 @@ const formatDate = (dateString) => {
   const date = new Date(dateString)
   return date.toLocaleString('fr-FR')
 }
+
+const goTo = (link)=>{
+  window.location.href = link
+
+}
+
 </script>
 
 <style scoped>

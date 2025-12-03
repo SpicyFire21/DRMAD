@@ -42,7 +42,7 @@ const filterPriceActive = ref(false);
 const filterNameActive = ref(false);
 const filterStockActive = ref(false);
 
-const nomChamps = ["name","description","stock","wait","sold","price"];
+const nomChamps = ["name","description","wait","sold","price"];
 const showCheckBox = ref(true);
 
 const selected = ref([]);

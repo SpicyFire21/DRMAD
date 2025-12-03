@@ -99,7 +99,7 @@ export const useBankStore = defineStore('bank', () => {
     return { currentAccount,
         accountAmount,
         accountTransactions,
-        accountNumberState,
+        accountNumberState,setAccount,
         getAccount,
         getAccountAmount,
         getTransactions,

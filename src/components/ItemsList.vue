@@ -3,7 +3,7 @@
     <h2>Liste des Virus à acheter 🧬</h2>
     <CheckedList
         :data="viruses.value"
-        :fields="['name', 'price', 'promotion','stock']"
+        :fields="['name','description','wait', 'price', 'promotion',]"
         :itemCheck="true"
         :checked="checked"
         :itemButton="{ show: true, text: 'Ajouter' }"
